@@ -16,15 +16,12 @@ pipeline {
 
         stage('Setup AWS Credentials') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'aws-creds',
+                withCredentials([usernamePassword(
+                    credentialsId: 'aws-creds',
                     usernameVariable: 'AWS_ACCESS_KEY_ID',
-                    passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-
-                    sh '''
-                        echo AWS Credentials Loaded
-                        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                    '''
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                )]) {
+                    sh 'echo "AWS Credentials Loaded"'
                 }
             }
         }
@@ -45,15 +42,6 @@ pipeline {
             steps {
                 sh 'terraform output'
             }
-        }
-    }
-
-    post {
-        success {
-            echo "Infrastructure created successfully!"
-        }
-        failure {
-            echo "Pipeline failed!"
         }
     }
 }
