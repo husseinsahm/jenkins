@@ -14,6 +14,20 @@ pipeline {
             }
         }
 
+        stage('Setup AWS Credentials') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'aws-creds', 
+                    usernameVariable: 'AWS_ACCESS_KEY_ID', 
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                        sh '''
+                            echo "AWS Credentials Loaded"
+                            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                        '''
+                }
+            }
+        }
+
         stage('Terraform Init') {
             steps {
                 sh 'terraform init'
@@ -31,7 +45,6 @@ pipeline {
                 sh 'terraform output'
             }
         }
-
     }
 
     post {
