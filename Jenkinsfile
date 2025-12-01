@@ -14,34 +14,37 @@ pipeline {
             }
         }
 
-        stage('Setup AWS Credentials') {
+        stage('Terraform Deploy') {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'aws-creds',
                     usernameVariable: 'AWS_ACCESS_KEY_ID',
                     passwordVariable: 'AWS_SECRET_ACCESS_KEY'
                 )]) {
-                    sh 'echo "AWS Credentials Loaded"'
+
+                    sh '''
+                        echo "AWS Credentials Loaded"
+
+                        echo "=== Terraform Init ==="
+                        terraform init
+
+                        echo "=== Terraform Apply ==="
+                        terraform apply -auto-approve -var "key_name=ahussein"
+
+                        echo "=== Terraform Output ==="
+                        terraform output
+                    '''
                 }
             }
         }
+    }
 
-        stage('Terraform Init') {
-            steps {
-                sh 'terraform init'
-            }
+    post {
+        success {
+            echo "Infrastructure deployed successfully!"
         }
-
-        stage('Terraform Apply') {
-            steps {
-                sh 'terraform apply -auto-approve -var "key_name=ahussein"'
-            }
-        }
-
-        stage('Show Output') {
-            steps {
-                sh 'terraform output'
-            }
+        failure {
+            echo "Pipeline failed!"
         }
     }
 }
