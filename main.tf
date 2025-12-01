@@ -118,7 +118,7 @@ apt install -y apache2
 
 PRIVATE_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
 
-echo "<html><body><h1>Hello Ahmed</h1><h2>Private IP: ${PRIVATE_IP}</h2></body></html>" > /var/www/html/index.html
+echo "<html><body><h1>Hello Ahmed</h1><h2>Private IP: $${PRIVATE_IP}</h2></body></html>" > /var/www/html/index.html
 
 systemctl restart apache2
 systemctl enable apache2
